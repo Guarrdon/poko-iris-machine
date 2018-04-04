@@ -1,0 +1,41 @@
+{
+  "name": "poko-iris-machine",
+  "version": "1.0.0",
+  "description": "new game for nieces",
+  "scripts": {
+    "test": "jest",
+    "grunt": "grunt",
+    "start": "node ./dist/server",
+    "prepare": "tsc"
+  },
+  "author": "ML",
+  "license": "ISC",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/jest": "^21.1.8",
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-ts": "^6.0.0-beta.17",
+    "jest": "^21.2.1",
+    "ts-jest": "^21.2.4",
+    "typescript": "^2.6.2"
+  }
+}
