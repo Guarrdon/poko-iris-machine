@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2016",
         "module": "commonjs",
-        "outDir": "./test/dist",
         "experimentalDecorators": true,
-        "lib": [ "es6" ]
-    }
+        "lib": [ "es2016" ]
+    }   
 }

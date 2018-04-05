@@ -2,11 +2,11 @@ import * as express from 'express';
 
 export default class ViewRouter {
   
+  //Used mostly for view redirects
   public static configure(app:express.Application) {
     
-    //Root route
-    app.get('/', function (req, res) {
-      res.send('Welcome to Battleship (for beginners)')
+    app.get('/welcome', function (req, res) {
+      res.send('Welcome to Poko-Iris-Machine')
     });  
 
   }
