@@ -1,6 +1,6 @@
-import * as Game from '../src/domain/battleship';
-import { GameState } from '../src/domain/summary';
-import * as Errors from '../src/errors/errors';
+import * as Game from '../src/server/domain/battleship';
+import { GameState } from '../src/server/domain/summary';
+import * as Errors from '../src/server/errors/errors';
 
 describe('Game Initialization API', () => {
 

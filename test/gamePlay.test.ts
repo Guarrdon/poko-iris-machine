@@ -1,7 +1,7 @@
-import * as Game from '../src/domain/battleship';
-import { GameState } from '../src/domain/summary';
-import * as Errors from '../src/errors/errors';
-import * as ShipInfo from '../src/domain/ship';
+import * as Game from '../src/server/domain/battleship';
+import { GameState } from '../src/server/domain/summary';
+import * as Errors from '../src/server/errors/errors';
+import * as ShipInfo from '../src/server/domain/ship';
 
 
 describe('Game Play API', () => {

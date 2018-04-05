@@ -1,13 +1,13 @@
 import * as express from 'express';
-import views from './views/routes';
+//import views from './client/routes';
 import api from './api/routes';
 
 const port = process.env.PORT || 3000
 const app = express();
 
-views.configure(app);
+//views.configure(app);
 api.configure(app);
-app.use(express.static('dist'))
+app.use(express.static('dist/client'))
 
 app.listen(port, (err) => {
   if (err) {
