@@ -2,8 +2,18 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
-        //"outDir": "./test/dist",
+        "sourceMap": true,
+        "outDir": "./dist",
         "experimentalDecorators": true,
-        "lib": [ "es6" ]
-    }
+        "lib": [ "es2016", "dom" ],
+        "jsx": "react"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ],
+   
 }
