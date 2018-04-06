@@ -1,42 +1,56 @@
 import * as React from 'react';
-//import Snackbar from 'material-ui/Snackbar';
-//import PubSub from 'pubsub-js';
+import PropTypes from 'prop-types';
+import Button from 'material-ui/Button';
+import { Theme, withStyles, WithStyles } from "material-ui/styles";
 
-//import CardListComponent from './CardList';
-
-
-export default class newGameOptions extends React.Component {
-  
-    state: object;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        }
-    }
-
-    
-
-    // closeError = () => {
-    //     this.setState({
-    //         errorOpen: false,
-    //         errorMessage: '',
-    //     });
-    // };
-
-    // componentWillMount = () => {
-    // };
-    // componentDidMount = () => {
-    // };
-    // componentWillUnmount = () => {
-    // };
-
-    render() {
-        return (
-            <div>
-                I am here to test
-            </div>
-        );
-    }
+interface INewGameOptionProps {
+  defaultPlayers: number;
+  defaultRounds: number;
 }
+
+interface INewGameOptionState {
+  selectedPlayers: number;
+  totalRounds: number;
+};
+
+const style = {
+  margin: '20px',
+  backgroundColor: 'DarkGreen'
+};
+
+//export default class NewGameOptions extends React.Component<WithStyles<'root'>> {
+export default class NewGameOptions extends React.Component<INewGameOptionProps, INewGameOptionState> {
+
+  constructor(props: INewGameOptionProps) {
+    super(props)
+    // initial state
+    this.state = {
+      selectedPlayers: props.defaultPlayers,
+      totalRounds: props.defaultRounds
+    }
+  }
+
+
+  
+  public render() {
+    return (
+      <div>
+        <Button size="large" variant="raised" color="primary" style={style}>
+            3
+        </Button>
+        <Button size="large" variant="raised" color="primary" style={style}>
+            4
+        </Button>
+        <Button size="large" variant="raised" color="primary" style={style}>
+            5
+        </Button>
+          <Button size="large" variant="raised" color="primary" style={style}>
+            6
+        </Button>
+
+      </div>
+    );
+  }
+}
+
+

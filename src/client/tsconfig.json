@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2015",
         "module": "commonjs",
         "sourceMap": true,
         "experimentalDecorators": true,
-        "lib": [ "es2016", "dom" ],
-        "jsx": "react"
+        "lib": [ "es2015", "dom" ],
+        "jsx": "react",
+        "allowSyntheticDefaultImports":true
     },
     "include": [
         "./**/*"

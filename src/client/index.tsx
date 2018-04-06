@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 
 
 import NewGameOptionsView from './components/newGameOptions';
@@ -10,10 +10,13 @@ import NewGameOptionsView from './components/newGameOptions';
 //// http://stackoverflow.com/a/34015469/988941
 //injectTapEventPlugin();
 
+
+const theme = createMuiTheme();
+
 const App = () => (
-    <MuiThemeProvider>
+    <MuiThemeProvider theme={theme}>
         <div>
-            <NewGameOptionsView />
+            <NewGameOptionsView defaultPlayers={3} defaultRounds={12} />
         </div>
     </MuiThemeProvider>
 );

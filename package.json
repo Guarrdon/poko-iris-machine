@@ -10,7 +10,7 @@
     "full": "tsc -p ./src/server/tsconfig.json | webpack --mode development",
     "test": "jest",
     "build:prod": "webpack -p",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch --mode development"
   },
   "author": "ML",
   "license": "ISC",
@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "express": "^4.16.2",
-    "material-ui": "^0.20.0",
+    "material-ui": "^1.0.0-beta.40",
+    "prop-types": "^15.6.1",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "react-tap-event-plugin": "^3.0.2"
