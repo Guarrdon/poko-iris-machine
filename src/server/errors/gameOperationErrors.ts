@@ -1,4 +1,4 @@
-import { GameMode } from '../domain/pokoirismachineGame'
+import { GameMode } from '../domain/pokoirismachine'
 
 
 export class InvalidGameOperation extends Error {

@@ -4,7 +4,7 @@ import * as Errors from '../errors/errors';
 
 import Player from './player'
 import Resource from './resource'
-import { PokoIrisMachine, GameMode } from './pokoirismachineGame'
+import { PokoIrisMachine, GameMode } from './pokoirismachine'
 import GameDefaults from './gameDefaults'
 
 export default class GameSetup {
@@ -35,7 +35,7 @@ export default class GameSetup {
         
         //set next game mode
         pim.gameMode = GameMode.RequiresPlayerSetup
-        
+
         return this.gameToken
     }
 }
