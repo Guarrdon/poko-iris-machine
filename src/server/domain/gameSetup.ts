@@ -9,10 +9,11 @@ import GameDefaults from './gameDefaults'
 
 export default class GameSetup {
 
-    numberOfPlayers: number;
-    numberOfRounds: number;
+    gameToken: string
 
-    players: Player[]
+    numberOfPlayers: number
+    numberOfRounds: number
+
     allResources: Resource[]
 
     constructor(numPlayers: number, numRounds: number) {
@@ -30,6 +31,7 @@ export default class GameSetup {
         //todo: cache game
 
         var id = uuid()
+        this.gameToken = id;
         var pim =  new PokoIrisMachine(id, this)
         return id
     }

@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as Errors from '../errors/errors';
 
 import GameSetup from '../domain/gameSetup';
-import GameToken from './gameToken';
 
 export default class ApiRouter {
 
@@ -15,14 +14,13 @@ export default class ApiRouter {
        * @apiParam {Number} numberOfRounds Number of rounds for the game: range 3-20.
        * 
        * @apiError InvalidGameStartupArguments Game configuration out of range.
-       * @apiSuccess {GameToken} game token with valid game id.
+       * @apiSuccess {GameSetup} game setup details with valid game id.
        */
     app.get('/api/configureNewGame', function (req, res) {
       try {
         const gameSetup = new GameSetup(req.params.numberOfPlayers, req.params.numberOfRounds);
         const id = gameSetup.ConfigureNewGame();
-        const token = new GameToken(id);
-        res.send(token);
+        res.send(gameSetup);
 
       } catch (error) {
         if (error instanceof Errors.InvalidGameStartupArguments)
