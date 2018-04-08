@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as Errors from '../errors/errors';
 
 import GameSetup from '../domain/gameSetup';
+import { PokoIrisMachine } from '../domain/pokoirismachine'
 
 export default class ApiRouter {
 
@@ -23,23 +24,21 @@ export default class ApiRouter {
         res.send(gameSetup);
 
       } catch (error) {
-        if (error instanceof Errors.InvalidGameStartupArguments)
+        if (error instanceof Errors.InvalidGameSetupArguments)
           res.status(400).send({ error: error.message });
         else
           res.status(500).send({ error: 'Unknown initialization error.' });
       }
     })
 
-
-
     /**
-     * @api {post} /placeship Place player ship on board
-     * @apiName PlaceShip
+     * @api {post} /api/playerSetup Configure each player
+     * @apiName PlayerSetup
      *
-     * @apiParam {Number} shipSize Size of ship to be placed.
-     * @apiParam {Number} x X-axis coordinate of ship to left most corner.
-     * @apiParam {Number} y Y-axis coordinate of ship to left most corner.
-     * @apiParam {Number} orientation Ship orientation on board (0 - vertical, 1 - horizontal).
+     * @apiParam {String} gameToken Unique game identifier, used to maintain session.
+     * @apiParam {String} playerId Unique identifier of player.
+     * @apiParam {String} playerName Name of player.
+     * @apiParam {String} selectedResource Chosen resource id (from known list).
      *
      * @apiSuccess {String} actionResult Successful placement of ship.
      * @apiSuccess {String} summary Game summary.
@@ -47,23 +46,24 @@ export default class ApiRouter {
      * @apiError ShipOverflow Ship's dimensions and placement exceeded board size.
      * @apiError ShipOverlap Ship cannot be placed on top of another ship.
      */
-    // app.post('/api/placeship', function (req, res) {
-    //   try {
+    app.post('/api/playerSetup', function (req, res) {
+      try {
 
-    //     //build temporary ship - type: Ship.ShipType, x: number, y: number, orientation: Ship.ShipOrientation
-    //     const ship = new ShipInfo.ShipBuilder(req.params.type, req.params.x, req.params.y, req.params.orientation).Create();
+       
+        const pim = PokoIrisMachine.GetGame(req.params.gameToken)
+        pim.SetupPlayer(req.params.playerId, req.params.playerName, req.params.selectedResource)
+   
+        res.sendStatus(200)
 
-    //     //attempt to place on player board
-    //     battleship.PlaceUserShip(ship);
-    //     res.send(battleship.summary);
-
-    //   } catch (error) {
-    //     if (error instanceof Errors.InvalidActionForGameStateError || error instanceof Errors.ShipPlacementError || error instanceof Errors.ShipOverlapError)
-    //       res.status(400).send({ error: error.message });
-    //     else
-    //       res.status(500).send({ error: 'Unknown initialization error.' });
-    //   }
-    // })
+      } catch (error) {
+        if (error instanceof Errors.InvalidGame)
+          res.status(400).send({ error: error.message });
+        else if (false)
+          res.status(400).send({ error: error.message });
+        else
+          res.status(500).send({ error: 'Unknown initialization error.' });
+      }
+    })
 
 
 

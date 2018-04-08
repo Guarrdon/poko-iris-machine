@@ -2,10 +2,8 @@
 
 export default class Resource {
 
-    name: string;
+    id: string
+    name: string
     
-    
-    constructor() { }
-
-    
+    constructor() { } 
 }

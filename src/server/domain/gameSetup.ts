@@ -23,9 +23,9 @@ export default class GameSetup {
 
     public ConfigureNewGame(): string {
         if (this.numberOfPlayers < GameDefaults.MinPlayers || this.numberOfPlayers > GameDefaults.MaxPlayers)
-            throw new Errors.InvalidGameStartupArguments();
+            throw new Errors.InvalidGameSetupArguments();
         if (this.numberOfRounds < GameDefaults.MinRounds || this.numberOfRounds > GameDefaults.MaxRounds)
-            throw new Errors.InvalidGameStartupArguments();
+            throw new Errors.InvalidGameSetupArguments();
 
         //todo: get resource
         //todo: cache game
