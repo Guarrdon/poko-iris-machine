@@ -1,38 +1,38 @@
 import * as express from 'express';
-import { battleship } from '../domain/battleship';
-import * as ShipInfo from '../domain/ship';
-import * as Errors from '../errors/errors'
+import * as Errors from '../errors/errors';
+
+import GameSetup from '../domain/gameSetup';
+import GameToken from './gameToken';
 
 export default class ApiRouter {
 
   public static configure(app: express.Application) {
 
     /**
-     * @api {post} /startnew Start New Game
-     * @apiName StartNew
-     *
-     * @apiParam {Number} boardSize Size to initiate square game board.
-     * 
-     * @apiSuccess {String} actionResult Successful creation of game board.
-     * @apiSuccess {String} summary Game summary.
-     *
-     * @apiError Board size must be greater than or equal to 5.
-     * @apiError Failed to initialize game state.
-     */
-    app.post('/api/startnew', function (req, res) {
+       * @api {get} /api/configureNewGame Configure a new game.
+       * @apiName ConfigureNewGame
+       * @apiParam {Number} numberOfPlayers Number of players that are playing: range 3-6.
+       * @apiParam {Number} numberOfRounds Number of rounds for the game: range 3-20.
+       * 
+       * @apiError InvalidGameStartupArguments Game configuration out of range.
+       * @apiSuccess {GameToken} game token with valid game id.
+       */
+    app.get('/api/configureNewGame', function (req, res) {
       try {
-
-        //init game
-        battleship.Init(req.params.size, req.params.requiredShips);
-        res.send(battleship.summary);
+        const gameSetup = new GameSetup(req.params.numberOfPlayers, req.params.numberOfRounds);
+        const id = gameSetup.ConfigureNewGame();
+        const token = new GameToken(id);
+        res.send(token);
 
       } catch (error) {
-        if (error instanceof Errors.InitBoardSizeError)
+        if (error instanceof Errors.InvalidGameStartupArguments)
           res.status(400).send({ error: error.message });
         else
           res.status(500).send({ error: 'Unknown initialization error.' });
       }
-    });
+    })
+
+
 
     /**
      * @api {post} /placeship Place player ship on board
@@ -49,70 +49,24 @@ export default class ApiRouter {
      * @apiError ShipOverflow Ship's dimensions and placement exceeded board size.
      * @apiError ShipOverlap Ship cannot be placed on top of another ship.
      */
-    app.post('/api/placeship', function (req, res) {
-      try {
+    // app.post('/api/placeship', function (req, res) {
+    //   try {
 
-        //build temporary ship - type: Ship.ShipType, x: number, y: number, orientation: Ship.ShipOrientation
-        const ship = new ShipInfo.ShipBuilder(req.params.type, req.params.x, req.params.y, req.params.orientation).Create();
+    //     //build temporary ship - type: Ship.ShipType, x: number, y: number, orientation: Ship.ShipOrientation
+    //     const ship = new ShipInfo.ShipBuilder(req.params.type, req.params.x, req.params.y, req.params.orientation).Create();
 
-        //attempt to place on player board
-        battleship.PlaceUserShip(ship);
-        res.send(battleship.summary);
+    //     //attempt to place on player board
+    //     battleship.PlaceUserShip(ship);
+    //     res.send(battleship.summary);
 
-      } catch (error) {
-        if (error instanceof Errors.InvalidActionForGameStateError || error instanceof Errors.ShipPlacementError || error instanceof Errors.ShipOverlapError)
-          res.status(400).send({ error: error.message });
-        else
-          res.status(500).send({ error: 'Unknown initialization error.' });
-      }
-    })
+    //   } catch (error) {
+    //     if (error instanceof Errors.InvalidActionForGameStateError || error instanceof Errors.ShipPlacementError || error instanceof Errors.ShipOverlapError)
+    //       res.status(400).send({ error: error.message });
+    //     else
+    //       res.status(500).send({ error: 'Unknown initialization error.' });
+    //   }
+    // })
 
-    /**
-     * @api {post} /fire User attacks computer
-     * @apiName Fire
-     *
-     * @apiParam {Number} x X-axis coordinate of ship to left most corner.
-     * @apiParam {Number} y Y-axis coordinate of ship to left most corner.
-     *
-     * @apiSuccess {String} actionResult Hit or Miss or Sunk Ship.
-     * @apiSuccess {String} summary Game summary.
-     *
-     * @apiError FireOverflow Fired coordinates are beyond board dimensions.
-     * @apiError RepeatHit Hit already.
-     */
-    app.post('/api/fire', function (req, res) {
-
-      try {
-
-        //Fire shot at computer board
-        const summary = battleship.FireShot(new ShipInfo.Position(req.params.x, req.params.y));
-        res.send(summary);
-
-      } catch (error) {
-        if (error instanceof Errors.InvalidActionForGameStateError || error instanceof Errors.ShotPlacementError)
-          res.status(400).send({ error: error.message });
-        else
-          res.status(500).send({ error: 'Unknown initialization error.' });
-      }
-
-    })
-
-
-    /**
-     * @api {get} /summary Retrieve game summary.
-     * @apiName Summary
-     *
-     * @apiSuccess {Summary} summary Game summary.
-     */
-    app.get('/api/summary', function (req, res) {
-      try {
-
-        res.send(battleship.summary);
-
-      } catch (error) {
-        res.status(500).send({ error: 'Unknown game summary error.' });
-      }
-    })
 
 
 

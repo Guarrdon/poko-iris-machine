@@ -1,53 +1,40 @@
-import * as Game from '../src/server/domain/battleship';
 import * as Errors from '../src/server/errors/errors';
-import * as ShipInfo from '../src/server/domain/ship';
 
+import GameSetup from '../src/server/domain/gameSetup';
+import PokoIrisMachine from '../src/server/domain/pokoirismachineGame';
+import GameDefaults from '../src/server/domain/gameDefaults'
 
 describe('Game Setup API', () => {
-
-  describe('Place Single Ship', () => {
-
-    const battleship = new Game.BattleShip();
-    battleship.Init(10, 5);
-    const ship = new ShipInfo.ShipBuilder(ShipInfo.ShipType.Battleship, 2, 2, ShipInfo.ShipOrientation.Horizontal).Create();
-    battleship.PlaceUserShip(ship);
-
-    test('Single sip created on player board', () => {
-      expect(battleship.playerBoard.ships.length).toBe(1);
-    });
-    test('Single ship created is battleship', () => {
-      expect(battleship.playerBoard.ships[0].type).toBe(ShipInfo.ShipType.Battleship);
+  
+  describe('Successful game setup', () => {
+    test('Game successfully initiated', () => {
+      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MaxRounds);
+      const pim = setup.ConfigureNewGame();
+      expect(pim).not.toBeNull();
+      expect(pim.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Invalid Placement of Single Ship', () => {
-    const battleship = new Game.BattleShip();
-    battleship.Init(5, 5);
-    const ship = new ShipInfo.ShipBuilder(ShipInfo.ShipType.Battleship, 6, 6, ShipInfo.ShipOrientation.Horizontal).Create();
-
-    test('Ship placed outside of boundaries', () => {
-      expect(() => battleship.PlaceUserShip(ship)).toThrowError(Errors.ShipPlacementError);
+  describe('Invalid Game Setup', () => {
+    test('Too few players', () => {
+      const setup = new GameSetup(GameDefaults.MinPlayers-1, GameDefaults.MaxRounds);
+      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
     });
-    test('Zero ships create for invalid placement', () => {
-      expect(battleship.playerBoard.ships.length).toBe(0);
+    test('Too many players', () => {
+      const setup = new GameSetup(GameDefaults.MaxPlayers+1, GameDefaults.MaxRounds);
+      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
     });
-  });
-
-  describe('Invalid Overlap of Two Ships', () => {
-    const battleship = new Game.BattleShip();
-    battleship.Init(10, 5);
-    let ship = new ShipInfo.ShipBuilder(ShipInfo.ShipType.Battleship, 1, 3, ShipInfo.ShipOrientation.Horizontal).Create();
-    battleship.PlaceUserShip(ship);
-    ship = new ShipInfo.ShipBuilder(ShipInfo.ShipType.Battleship, 2, 2, ShipInfo.ShipOrientation.Vertical).Create();
-
-    test('Ship placed ontop of previously placed ship', () => {
-      expect(() => battleship.PlaceUserShip(ship)).toThrowError(Errors.ShipOverlapError);
+    test('Too few rounds', () => {
+      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MinRounds-1);
+      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
     });
-    test('Only first ship created for overlap event', () => {
-      expect(battleship.playerBoard.ships.length).toBe(1);
+    test('Too many rounds', () => {
+      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MaxRounds+1);
+      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
     });
   });
 
+ 
 });
 
 

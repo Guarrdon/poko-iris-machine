@@ -32,7 +32,8 @@
     "prop-types": "^15.6.1",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
-    "react-tap-event-plugin": "^3.0.2"
+    "react-tap-event-plugin": "^3.0.2",
+    "uuid-random": "^1.0.6"
   },
   "devDependencies": {
     "@types/express": "^4.0.39",
