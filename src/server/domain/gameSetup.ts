@@ -4,7 +4,7 @@ import * as Errors from '../errors/errors';
 
 import Player from './player'
 import Resource from './resource'
-import PokoIrisMachine from './pokoirismachineGame'
+import { PokoIrisMachine, GameMode } from './pokoirismachineGame'
 import GameDefaults from './gameDefaults'
 
 export default class GameSetup {
@@ -30,10 +30,13 @@ export default class GameSetup {
         //todo: get resource
         //todo: cache game
 
-        var id = uuid()
-        this.gameToken = id;
-        var pim =  new PokoIrisMachine(id, this)
-        return id
+        this.gameToken = uuid();
+        var pim =  new PokoIrisMachine(this.gameToken, this)
+        
+        //set next game mode
+        pim.gameMode = GameMode.RequiresPlayerSetup
+        
+        return this.gameToken
     }
 }
 
