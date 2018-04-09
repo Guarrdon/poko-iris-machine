@@ -1,11 +1,8 @@
-import uuid from 'uuid-random';
 
 import * as Errors from '../errors/errors';
 
 import Player from './player'
 import Resource from './resource'
-import { PokoIrisMachine, GameMode } from './pokoirismachine'
-import GameDefaults from './gameDefaults'
 
 export default class GameSetup {
 
@@ -16,27 +13,13 @@ export default class GameSetup {
 
     allResources: Resource[]
 
-    constructor(numPlayers: number, numRounds: number) {
+    constructor(token: string, numPlayers: number, numRounds: number) {
+        this.gameToken = token
         this.numberOfPlayers = numPlayers
         this.numberOfRounds = numRounds
+        this.allResources = new Array<Resource>()
     }
 
-    public ConfigureNewGame(): string {
-        if (this.numberOfPlayers < GameDefaults.MinPlayers || this.numberOfPlayers > GameDefaults.MaxPlayers)
-            throw new Errors.InvalidGameSetupArguments();
-        if (this.numberOfRounds < GameDefaults.MinRounds || this.numberOfRounds > GameDefaults.MaxRounds)
-            throw new Errors.InvalidGameSetupArguments();
 
-        //todo: get resource
-        //todo: cache game
-
-        this.gameToken = uuid();
-        var pim =  new PokoIrisMachine(this.gameToken, this)
-        
-        //set next game mode
-        pim.gameMode = GameMode.RequiresPlayerSetup
-
-        return this.gameToken
-    }
 }
 

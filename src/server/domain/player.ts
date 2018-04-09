@@ -1,3 +1,5 @@
+import uuid from 'uuid-random';
+
 import Resource from './resource'
 import ResourceQuantity from './resourceQuantity'
 
@@ -9,6 +11,8 @@ export default class Player {
 
     assets: ResourceQuantity[]
       
-    constructor() { }
+    constructor() { 
+        this.id = uuid()
+    }
     
 }

@@ -19,8 +19,8 @@ export default class ApiRouter {
        */
     app.get('/api/configureNewGame', function (req, res) {
       try {
-        const gameSetup = new GameSetup(req.params.numberOfPlayers, req.params.numberOfRounds);
-        const id = gameSetup.ConfigureNewGame();
+
+        const gameSetup = PokoIrisMachine.ConfigureNewGame(req.params.numberOfPlayers, req.params.numberOfRounds);
         res.send(gameSetup);
 
       } catch (error) {
@@ -36,7 +36,6 @@ export default class ApiRouter {
      * @apiName PlayerSetup
      *
      * @apiParam {String} gameToken Unique game identifier, used to maintain session.
-     * @apiParam {String} playerId Unique identifier of player.
      * @apiParam {String} playerName Name of player.
      * @apiParam {String} selectedResource Chosen resource id (from known list).
      *
@@ -49,22 +48,24 @@ export default class ApiRouter {
     app.post('/api/playerSetup', function (req, res) {
       try {
 
-       
         const pim = PokoIrisMachine.GetGame(req.params.gameToken)
-        pim.SetupPlayer(req.params.playerId, req.params.playerName, req.params.selectedResource)
-   
+        const playerId = pim.SetupPlayer(req.params.playerName, req.params.selectedResource)
+
         res.sendStatus(200)
 
       } catch (error) {
         if (error instanceof Errors.InvalidGame)
           res.status(400).send({ error: error.message });
-        else if (false)
+        else if (error instanceof Errors.InvalidPlayerSetupArguments)
+          res.status(400).send({ error: error.message });
+        else if (error instanceof Errors.PlayerAlreadyExists)
           res.status(400).send({ error: error.message });
         else
           res.status(500).send({ error: 'Unknown initialization error.' });
       }
     })
 
+    //todo: refactor error handlers in try catches throughout
 
 
 

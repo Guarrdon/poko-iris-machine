@@ -1,36 +1,35 @@
 import * as Errors from '../src/server/errors/errors';
 
 import GameSetup from '../src/server/domain/gameSetup';
-import PokoIrisMachine from '../src/server/domain/pokoirismachineGame';
+import { PokoIrisMachine } from '../src/server/domain/pokoirismachine';
 import GameDefaults from '../src/server/domain/gameDefaults'
 
 describe('Game Setup API', () => {
   
   describe('Successful game setup', () => {
     test('Game successfully initiated', () => {
-      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MaxRounds);
-      const pim = setup.ConfigureNewGame();
-      expect(pim).not.toBeNull();
-      expect(pim.length).toBeGreaterThan(0);
+      const setup = PokoIrisMachine.ConfigureNewGame(GameDefaults.MinPlayers, GameDefaults.MaxRounds)
+      expect(setup).not.toBeNull()
+      expect(setup.gameToken.length).toBeGreaterThan(0)
+      expect(setup.numberOfPlayers).toBeGreaterThanOrEqual(GameDefaults.MinPlayers)
+      expect(setup.numberOfPlayers).toBeLessThanOrEqual(GameDefaults.MaxPlayers)
+      expect(setup.numberOfRounds).toBeGreaterThanOrEqual(GameDefaults.MinRounds)
+      expect(setup.numberOfRounds).toBeLessThanOrEqual(GameDefaults.MaxRounds)
     });
   });
 
   describe('Invalid Game Setup', () => {
     test('Too few players', () => {
-      const setup = new GameSetup(GameDefaults.MinPlayers-1, GameDefaults.MaxRounds);
-      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
+      expect(() => PokoIrisMachine.ConfigureNewGame(GameDefaults.MinPlayers-1, GameDefaults.MaxRounds)).toThrowError(Errors.InvalidGameSetupArguments);
     });
     test('Too many players', () => {
-      const setup = new GameSetup(GameDefaults.MaxPlayers+1, GameDefaults.MaxRounds);
-      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
+      expect(() => PokoIrisMachine.ConfigureNewGame(GameDefaults.MaxPlayers+1, GameDefaults.MaxRounds)).toThrowError(Errors.InvalidGameSetupArguments);
     });
     test('Too few rounds', () => {
-      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MinRounds-1);
-      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
+      expect(() => PokoIrisMachine.ConfigureNewGame(GameDefaults.MinPlayers, GameDefaults.MinRounds-1)).toThrowError(Errors.InvalidGameSetupArguments);
     });
     test('Too many rounds', () => {
-      const setup = new GameSetup(GameDefaults.MinPlayers, GameDefaults.MaxRounds+1);
-      expect(() => setup.ConfigureNewGame()).toThrowError(Errors.InvalidGameStartupArguments);
+      expect(() => PokoIrisMachine.ConfigureNewGame(GameDefaults.MinPlayers, GameDefaults.MaxRounds+1)).toThrowError(Errors.InvalidGameSetupArguments);
     });
   });
 

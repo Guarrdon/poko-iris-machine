@@ -13,3 +13,11 @@ export class InvalidPlayerSetupArguments extends Error {
     }
 }
 //refer to https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
+
+export class PlayerAlreadyExists extends Error {
+    constructor(name:string) {
+        super(`Player ${name} already exists.  Cannot have two players named the same.`); 
+        Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain * see note
+    }
+}
+//refer to https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
