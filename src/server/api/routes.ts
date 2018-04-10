@@ -82,15 +82,15 @@ export default class ApiRouter {
      * @apiError InvalidGame Game not found
      * @apiError InvalidGameOperation Cannot perform function while in the current game mode
      *
-     * @apiSuccess {HttpResonseCode} 200 Succesfully started game.
+     * @apiSuccess {GameEvents.GameEvent} introEvent Succesfully started game and returned initial intro event.
      */
     app.post('/api/beginGame', function (req, res) {
       try {
 
         const pim = PokoIrisMachine.GetGame(req.params.gameToken)
-        const output = pim.BeginGame()
+        const introEvent = pim.BeginGame()
 
-        res.sendStatus(200)
+        res.send(introEvent)
 
       } catch (error) {
         if (error instanceof Errors.InvalidGame)

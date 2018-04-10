@@ -4,6 +4,7 @@ import * as Errors from '../errors/errors'
 import GameSetup from './gameSetup'
 import Player from './player'
 import GameDefaults from './gameDefaults'
+import * as GameEvents from './gameEvent';
 
 export enum GameMode {
     RequiresGameSetup = 0,
@@ -22,7 +23,7 @@ export class PokoIrisMachine {
     players: Player[]
 
     currentRound: number
-    currentPlayer: Player
+    currentPlayer: number
 
 
 
@@ -62,16 +63,24 @@ export class PokoIrisMachine {
     }
 
     private ValidateAllPlayersSet():boolean{
+        if (this.players.length!=this.setup.numberOfPlayers)
+            return false;
         return this.players.every(x=> x.name!=null && x.primaryResource!=null)
     }
 
     ///
-    public BeginGame(): void {
+    public BeginGame(): GameEvents.GameEvent {
         if (this.gameMode != GameMode.ReadyToStartGamePlay)
             throw new Errors.InvalidGameOperation(this.gameMode)
 
         this.gameMode = GameMode.GameInProcess
+        const introEvent = new GameEvents.PassiveEvent("Poko-Iris-Machine introduces some new resources to the market.  Which one will be the most valuable?")
+        return introEvent;
     }
+
+    ///
+
+
 
 
     //Static Methods-------

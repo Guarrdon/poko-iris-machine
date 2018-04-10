@@ -2,7 +2,7 @@ import uuid from 'uuid-random';
 
 import * as Errors from '../src/server/errors/errors';
 import GameSetup from '../src/server/domain/gameSetup';
-import { PokoIrisMachine } from '../src/server/domain/pokoirismachine';
+import { PokoIrisMachine, GameMode } from '../src/server/domain/pokoirismachine';
 import GameDefaults from '../src/server/domain/gameDefaults'
 import Resource from '../src/server/domain/resource'
 
@@ -49,6 +49,29 @@ describe('Game Setup API', () => {
         test('Player resource invalid', () => {
             expect(() => context.SetupPlayer("", "001")).toThrowError(Errors.InvalidPlayerSetupArguments);
         })
+    })
+
+    describe('Ready to play game', () => {
+        test('All players setup', () => {
+            const player1 = context.SetupPlayer("Alpha", "111")
+            const player2 = context.SetupPlayer("Beta", "222")
+            const player3 = context.SetupPlayer("Charlie", "333")
+            expect(context).not.toBeNull()
+            expect(context.gameMode).toBe(GameMode.ReadyToStartGamePlay)
+        })
+        test('Successful begin game', () => {
+            const player1 = context.SetupPlayer("Alpha", "111")
+            const player2 = context.SetupPlayer("Beta", "222")
+            const player3 = context.SetupPlayer("Charlie", "333")
+            const event = context.BeginGame()
+            expect(context).not.toBeNull()
+            expect(context.gameMode).toBe(GameMode.GameInProcess)
+        })
+        test('Unsuccessful begin game (not enough players)', () => {
+            const player1 = context.SetupPlayer("Alpha", "111")
+            expect(() => context.BeginGame()).toThrowError(Errors.InvalidGameOperation);
+        })
+
     })
 
 
