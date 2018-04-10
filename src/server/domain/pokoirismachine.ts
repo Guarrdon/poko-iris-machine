@@ -36,7 +36,7 @@ export class PokoIrisMachine {
 
     ///
     public SetupPlayer(name: string, resourceId: string): string {
-        if ( name == null || name=="" || resourceId == null)
+        if (name == null || name == "" || resourceId == null)
             throw new Errors.InvalidPlayerSetupArguments()
         if (this.gameMode != GameMode.RequiresPlayerSetup && this.gameMode != GameMode.ReadyToStartGamePlay)
             throw new Errors.InvalidGameOperation(this.gameMode)
@@ -48,13 +48,29 @@ export class PokoIrisMachine {
         player = new Player();
         player.name = name;
 
-        const resource = this.setup.allResources.find(x=> x.id==resourceId)     
-        if (resource==null)
+        const resource = this.setup.allResources.find(x => x.id == resourceId)
+        if (resource == null)
             throw new Errors.InvalidPlayerSetupArguments()
-        
+
         player.primaryResource = resource;
         this.players.push(player)
+
+        if (this.ValidateAllPlayersSet())
+            this.gameMode = GameMode.ReadyToStartGamePlay
+
         return player.id
+    }
+
+    private ValidateAllPlayersSet():boolean{
+        return this.players.every(x=> x.name!=null && x.primaryResource!=null)
+    }
+
+    ///
+    public BeginGame(): void {
+        if (this.gameMode != GameMode.ReadyToStartGamePlay)
+            throw new Errors.InvalidGameOperation(this.gameMode)
+
+        this.gameMode = GameMode.GameInProcess
     }
 
 
@@ -76,7 +92,7 @@ export class PokoIrisMachine {
 
         //temporarily assign to static var
         PokoIrisMachine.temp = pim
-        
+
         //set next game mode
         pim.gameMode = GameMode.RequiresPlayerSetup
 
@@ -87,7 +103,7 @@ export class PokoIrisMachine {
     ///
     public static GetGame(token: string): PokoIrisMachine {
         //get game, if null throw invalid game error
-        if (PokoIrisMachine.temp.gameToken!=token)
+        if (PokoIrisMachine.temp.gameToken != token)
             throw new Errors.InvalidGame();
 
         //todo: fix this...pull from cached/pesistent state

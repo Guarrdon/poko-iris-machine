@@ -14,7 +14,9 @@ export default class ApiRouter {
        * @apiParam {Number} numberOfPlayers Number of players that are playing: range 3-6.
        * @apiParam {Number} numberOfRounds Number of rounds for the game: range 3-20.
        * 
-       * @apiError InvalidGameStartupArguments Game configuration out of range.
+       * @apiError InvalidGameSetupArguments Game configuration out of range.
+       * @apiError InvalidGameOperation Cannot perform function while in the current game mode
+       *
        * @apiSuccess {GameSetup} game setup details with valid game id.
        */
     app.get('/api/configureNewGame', function (req, res) {
@@ -25,6 +27,8 @@ export default class ApiRouter {
 
       } catch (error) {
         if (error instanceof Errors.InvalidGameSetupArguments)
+          res.status(400).send({ error: error.message });
+        else if (error instanceof Errors.InvalidGameOperation)
           res.status(400).send({ error: error.message });
         else
           res.status(500).send({ error: 'Unknown initialization error.' });
@@ -39,11 +43,12 @@ export default class ApiRouter {
      * @apiParam {String} playerName Name of player.
      * @apiParam {String} selectedResource Chosen resource id (from known list).
      *
-     * @apiSuccess {String} actionResult Successful placement of ship.
-     * @apiSuccess {String} summary Game summary.
+     * @apiError InvalidGame Game not found
+     * @apiError InvalidPlayerSetupArguments Invalid player attributes (nulls)
+     * @apiError PlayerAlreadyExists Cannot have duplicate players (names)
+     * @apiError InvalidGameOperation Cannot perform function while in the current game mode
      *
-     * @apiError ShipOverflow Ship's dimensions and placement exceeded board size.
-     * @apiError ShipOverlap Ship cannot be placed on top of another ship.
+     * @apiSuccess {HttpResonseCode} 200 Successful player setup.
      */
     app.post('/api/playerSetup', function (req, res) {
       try {
@@ -60,10 +65,43 @@ export default class ApiRouter {
           res.status(400).send({ error: error.message });
         else if (error instanceof Errors.PlayerAlreadyExists)
           res.status(400).send({ error: error.message });
+        else if (error instanceof Errors.InvalidGameOperation)
+          res.status(400).send({ error: error.message });
         else
           res.status(500).send({ error: 'Unknown initialization error.' });
       }
     })
+
+
+    /**
+     * @api {post} /api/beginGame Begins game play
+     * @apiName BeginGame
+     *
+     * @apiParam {String} gameToken Unique game identifier, used to maintain session.
+     *
+     * @apiError InvalidGame Game not found
+     * @apiError InvalidGameOperation Cannot perform function while in the current game mode
+     *
+     * @apiSuccess {HttpResonseCode} 200 Succesfully started game.
+     */
+    app.post('/api/beginGame', function (req, res) {
+      try {
+
+        const pim = PokoIrisMachine.GetGame(req.params.gameToken)
+        const output = pim.BeginGame()
+
+        res.sendStatus(200)
+
+      } catch (error) {
+        if (error instanceof Errors.InvalidGame)
+          res.status(400).send({ error: error.message });
+        else if (error instanceof Errors.InvalidGameOperation)
+          res.status(400).send({ error: error.message });
+        else
+          res.status(500).send({ error: 'Unknown initialization error.' });
+      }
+    })
+
 
     //todo: refactor error handlers in try catches throughout
 

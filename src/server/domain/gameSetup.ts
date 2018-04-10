@@ -13,6 +13,7 @@ export default class GameSetup {
     numberOfRounds: number
 
     allResources: Resource[]
+    allEvents:GameEvents.GameEvent[]
 
     constructor(token: string, numPlayers: number, numRounds: number) {
         this.gameToken = token
@@ -20,6 +21,7 @@ export default class GameSetup {
         this.numberOfRounds = numRounds
 
         this.allResources = this.SetupResources()
+        this.allEvents = this.SetupEvents()
     }
 
     private SetupResources(): Array<Resource> {

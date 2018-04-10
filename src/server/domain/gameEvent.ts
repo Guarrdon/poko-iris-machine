@@ -3,6 +3,7 @@ import uuid from 'uuid-random';
 import * as Errors from '../errors/errors';
 import Utilities from './utility'
 import GameDefaults from './gameDefaults'
+import Resource from './resource'
 
 export abstract class GameEvent {
 
@@ -33,8 +34,13 @@ export abstract class GameEvent {
 
     protected abstract AssignChanges(): void
 
-    public GetEventDescription(...args){
-        return this.eventDescription;
+    public GetEventDescription(resourceList: Resource[] = null) {
+        let output = this.eventDescription
+        if (resourceList != null)
+            for (let x: number; x < resourceList.length; x++)
+                output = output.replace("{" + x + "}", resourceList[x].name);
+
+        return output;
     }
 }
 
