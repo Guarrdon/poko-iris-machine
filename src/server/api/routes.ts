@@ -133,9 +133,7 @@ export default class ApiRouter {
     })
 
 
-    //todo: refactor error handlers in try catches throughout
-
-
+  
 
   }
 }

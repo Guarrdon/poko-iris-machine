@@ -158,7 +158,6 @@ export class PokoIrisMachine {
         if (numberOfRounds < GameDefaults.MinRounds || numberOfRounds > GameDefaults.MaxRounds)
             throw new Errors.InvalidGameSetupArguments();
 
-        //todo: get resource
         //todo: cache game
 
         const token = uuid();
