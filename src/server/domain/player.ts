@@ -10,9 +10,19 @@ export default class Player {
     primaryResource: Resource
 
     assets: ResourceQuantity[]
-      
-    constructor() { 
+
+    constructor() {
         this.id = uuid()
+        this.assets = new Array<ResourceQuantity>()
     }
-    
+
+    public CreateAssetLedger(resources: Resource[]): void {
+        this.assets.push(new ResourceQuantity(this.primaryResource))
+        for (let resource of resources) {
+            if (resource.id != this.primaryResource.id)
+                this.assets.push(new ResourceQuantity(resource))
+        }
+
+    }
+
 }

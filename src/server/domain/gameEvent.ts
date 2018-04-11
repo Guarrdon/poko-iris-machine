@@ -15,8 +15,8 @@ export abstract class GameEvent {
     protected priceMin: number
     protected priceMax: number
 
-    playerSupplyChanges: Array<Number>
-    resourcePriceChanges: Array<Number>
+    playerSupplyChanges: Array<number>
+    resourcePriceChanges: Array<number>
 
     constructor(description: string, supplyChangeMin: number, supplyChangeMax: number, priceChangeMin: number, priceChangeMax: number) {
         this.eventDescription = description
@@ -26,19 +26,17 @@ export abstract class GameEvent {
         this.priceMin = priceChangeMin
         this.priceMax = priceChangeMax
 
-        this.playerSupplyChanges = new Array<Number>()
-        this.resourcePriceChanges = new Array<Number>()
-
-        this.AssignChanges()
+        this.playerSupplyChanges = new Array<number>()
+        this.resourcePriceChanges = new Array<number>()
     }
 
-    protected abstract AssignChanges(): void
+    public abstract AssignChanges(stdSupplyIncrease: number): void ;
 
     public GetEventDescription(resourceList: Resource[] = null) {
         let output = this.eventDescription
         if (resourceList != null)
-            for (let x: number; x < resourceList.length; x++)
-                output = output.replace("{" + x + "}", resourceList[x].name);
+            for (let x: number = 0; x < resourceList.length; x++)
+                output = output.replace("{" + x + "}", resourceList[x].name.toUpperCase())
 
         return output;
     }
@@ -50,11 +48,9 @@ export class PassiveEvent extends GameEvent {
     constructor(description: string) {
         super(description, 0, 0, 0, 0)
     }
-
-    protected AssignChanges(): void {
-        //no changes for a passive event
+    public AssignChanges(stdSupplyIncrease: number): void {
+        //do nothing - passive events can't effect change
     }
-
 }
 
 ///Market event can affect price and supply of all resources
@@ -64,11 +60,12 @@ export class MarketEvent extends GameEvent {
         super(description, supplyChangeMin, supplyChangeMax, priceChangeMin, priceChangeMax)
     }
 
-    protected AssignChanges(): void {
+    public AssignChanges(stdSupplyIncrease: number): void {
         for (let x: number = 0; x < GameDefaults.MaxPlayers; x++) {
             this.playerSupplyChanges.push(Utilities.randomIntFromInterval(this.supplyMin, this.supplyMax))
             this.resourcePriceChanges.push(Utilities.randomIntFromInterval(this.priceMin, this.priceMax))
         }
+        this.playerSupplyChanges[0] = stdSupplyIncrease + this.playerSupplyChanges[0]
     }
 
 }
@@ -80,11 +77,12 @@ export class PartnershipEvent extends GameEvent {
         super(description, supplyChangeMin, supplyChangeMax, priceChangeMin, priceChangeMax)
     }
 
-    protected AssignChanges(): void {
+    public AssignChanges(stdSupplyIncrease: number): void {
         for (let x: number = 0; x < 2; x++) {
             this.playerSupplyChanges.push(Utilities.randomIntFromInterval(this.supplyMin, this.supplyMax))
             this.resourcePriceChanges.push(Utilities.randomIntFromInterval(this.priceMin, this.priceMax))
         }
+        this.playerSupplyChanges[0] = stdSupplyIncrease + this.playerSupplyChanges[0]
     }
 }
 
@@ -95,11 +93,12 @@ export class ResourceEvent extends GameEvent {
         super(description, supplyChangeMin, supplyChangeMax, priceChangeMin, priceChangeMax)
     }
 
-    protected AssignChanges(): void {
+    public AssignChanges(stdSupplyIncrease: number): void {
         for (let x: number = 0; x < 1; x++) {
             this.playerSupplyChanges.push(Utilities.randomIntFromInterval(this.supplyMin, this.supplyMax))
             this.resourcePriceChanges.push(Utilities.randomIntFromInterval(this.priceMin, this.priceMax))
         }
+        this.playerSupplyChanges[0] = stdSupplyIncrease + this.playerSupplyChanges[0]
     }
 }
 
@@ -110,11 +109,11 @@ export class SupplyEvent extends GameEvent {
         super(description, supplyChangeMin, supplyChangeMax, 0, 0)
     }
 
-    protected AssignChanges(): void {
-
+    public AssignChanges(stdSupplyIncrease: number): void {
         for (let x: number = 0; x < 1; x++) {
-            this.resourcePriceChanges.push(Utilities.randomIntFromInterval(this.priceMin, this.priceMax))
+            this.playerSupplyChanges.push(Utilities.randomIntFromInterval(this.supplyMin, this.supplyMax))
         }
+        this.playerSupplyChanges[0] = stdSupplyIncrease + this.playerSupplyChanges[0]
     }
 }
 
@@ -125,11 +124,11 @@ export class PriceEvent extends GameEvent {
         super(description, 0, 0, priceChangeMin, priceChangeMax)
     }
 
-    protected AssignChanges(): void {
-
+    public AssignChanges(stdSupplyIncrease: number): void {
         for (let x: number = 0; x < 1; x++) {
             this.resourcePriceChanges.push(Utilities.randomIntFromInterval(this.priceMin, this.priceMax))
         }
+        this.playerSupplyChanges.push(stdSupplyIncrease);
     }
 }
 

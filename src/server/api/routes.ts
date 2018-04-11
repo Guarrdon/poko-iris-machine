@@ -102,6 +102,36 @@ export default class ApiRouter {
       }
     })
 
+    /**
+     * @api {post} /api/beginTurn Begins player turn
+     * @apiName BeginTurn
+     *
+     * @apiParam {String} gameToken Unique game identifier, used to maintain session.
+     * @apiParam {String} playerId Player whose turn it is.
+     *
+     * @apiError InvalidGame Game not found
+     * @apiError InvalidGameOperation Cannot perform function while in the current game mode
+     *
+     * @apiSuccess {PlayerTurn} turn player info, dice roll, and resulting event.
+     */
+    app.post('/api/beginTurn', function (req, res) {
+      try {
+
+        const pim = PokoIrisMachine.GetGame(req.params.gameToken)
+        const turn = pim.BeginPlayerTurn(req.params.playerId)
+
+        res.send(turn)
+
+      } catch (error) {
+        if (error instanceof Errors.InvalidGame)
+          res.status(400).send({ error: error.message });
+        else if (error instanceof Errors.InvalidGameOperation)
+          res.status(400).send({ error: error.message });
+        else
+          res.status(500).send({ error: 'Unknown initialization error.' });
+      }
+    })
+
 
     //todo: refactor error handlers in try catches throughout
 
