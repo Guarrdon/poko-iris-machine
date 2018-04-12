@@ -80,7 +80,7 @@ export class PokoIrisMachine {
         const chosenResources = this.players.map(x => x.primaryResource)
         for (let player of this.players) {
             player.CreateAssetLedger(chosenResources)
-            player.assets[0].quantity = GameDefaults.StartingResourceQuantity
+            player.AdjustPrimaryAssetBalance(GameDefaults.StartingResourceQuantity)
         }
 
         this.gameMode = GameMode.GameInProcess
@@ -92,17 +92,16 @@ export class PokoIrisMachine {
     public BeginPlayerTurn(playerId: string): PlayerTurn {
         if (this.gameMode != GameMode.GameInProcess)
             throw new Errors.InvalidGameOperation(this.gameMode)
+
         //todo: make sure correct player turn is occuring
+        //todo: handle current player without requiring it be passed in
 
         //player
-        const player = this.players.find(x => x.id == playerId)
-        if (player == null)
-            throw new Errors.PlayerDoesNotExist(playerId)
+        const player = this.GetPlayer(playerId)
 
         //randomized list of players
         //todo:fix currentplayer logic
         var shuffledPlayers = this.ShufflePlayersExceptFirst(this.setup.numberOfPlayers, this.currentPlayer)
-        console.log(shuffledPlayers)
 
         //dice roll
         const roll = new DiceRoll()
@@ -116,19 +115,10 @@ export class PokoIrisMachine {
         //apply event changes to player ledgers
         for (let x: number = 0; x < this.setup.numberOfPlayers && x < event.playerSupplyChanges.length; x++) {
             const playerIndex = shuffledPlayers[x]
-            const asset = this.players[playerIndex].assets[0]
-            asset.quantity += event.playerSupplyChanges[x]
-            //special rule - cannot drop below 1
-            if (asset.quantity < 1)
-                asset.quantity - 1
+            const player = this.players[playerIndex]
+            player.AdjustPrimaryAssetBalance(event.playerSupplyChanges[x])
         }
 
-        //rotate to next player
-        //todo: not yet...need to do this on player finish turn
-        this.currentPlayer++
-        if (this.currentPlayer > this.setup.numberOfPlayers - 1)
-            this.currentPlayer == 0
-        //
         return new PlayerTurn(player, roll, event);
     }
 
@@ -148,6 +138,43 @@ export class PokoIrisMachine {
         return shuffled
     }
 
+    ///
+    public ConcludePlayerTurn(otherPlayerId: string, otherAmount: number, playerAmount: number, rejected: boolean): void {
+        if (this.gameMode != GameMode.GameInProcess)
+            throw new Errors.InvalidGameOperation(this.gameMode)
+
+        if (!rejected) {
+
+            if (playerAmount < 1 || otherAmount < 1)
+                throw new Errors.TransactionCanNotHaveNegativeComponents()
+
+            //current player
+            const currentPlayer = this.players[this.currentPlayer]
+
+            //dealing player
+            const otherPlayer = this.GetPlayer(otherPlayerId)
+
+            //apply supply changes based on ratio deal negotiated
+            currentPlayer.AdjustPrimaryAssetBalance(playerAmount * -1)
+            currentPlayer.AdjustAssetBalance(otherPlayer.primaryResource.id, otherAmount)
+            otherPlayer.AdjustPrimaryAssetBalance(otherAmount * -1)
+            otherPlayer.AdjustAssetBalance(currentPlayer.primaryResource.id, playerAmount)
+        }
+
+        //todo: complete math for price change
+
+        //rotate to next player
+        this.currentPlayer++
+        if (this.currentPlayer > this.setup.numberOfPlayers - 1)
+            this.currentPlayer == 0
+    }
+
+    public GetPlayer(playerId: string): Player {
+        const player = this.players.find(x => x.id == playerId)
+        if (player == null)
+            throw new Errors.PlayerDoesNotExist(playerId)
+        return player
+    }
 
     //Static Methods-------
 

@@ -132,6 +132,42 @@ export default class ApiRouter {
       }
     })
 
+    /**
+     * @api {post} /api/endTurn Ends player turn
+     * @apiName EndTurn
+     *
+     * @apiParam {String} gameToken Unique game identifier, used to maintain session.
+     * @apiParam {String} otherPlayerId Player who negotiated with current player.
+     * @apiParam {String} otherAmount Amount other player is willing to give up (must be >=1).
+     * @apiParam {String} playerAmount Amount current player is willing to give up (must be >=1).
+     * @apiParam {Boolean} rejected Current player chose not to accept any deals.
+     *
+     * @apiError InvalidGame Game not found
+     * @apiError InvalidGameOperation Cannot perform function while in the current game mode
+     * @apiError ResourceDoesNotExist Resource cannot be found
+     * @apiError ResourceCanNotGoNegative Transaction cannot result in resources going negative
+     * @apiError TransactionCanNotHaveNegativeComponents Transaction cannot have non positive components
+     *
+     * @apiSuccess {HTTPCode} 200 successfully concluded turn.
+     */
+    app.post('/api/endTurn', function (req, res) {
+      try {
+        
+        const pim = PokoIrisMachine.GetGame(req.params.gameToken)
+        const turn = pim.ConcludePlayerTurn(req.params.otherPlayerId, req.params.otherAmount, req.params.playerAmount, req.params.rejected)
+
+        res.sendStatus(200)
+
+      } catch (error) {
+        if (error instanceof Errors.InvalidGame)
+          res.status(400).send({ error: error.message });
+        else if ((error instanceof Errors.InvalidGameOperation) || (error instanceof Errors.ResourceDoesNotExist) ||
+                (error instanceof Errors.ResourceCanNotGoNegative) || (error instanceof Errors.TransactionCanNotHaveNegativeComponents))
+          res.status(400).send({ error: error.message });
+        else
+          res.status(500).send({ error: 'Unknown initialization error.' });
+      }
+    })
 
   
 
