@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from 'material-ui/Button';
-import { Theme, withStyles, WithStyles } from "material-ui/styles";
+import Button from '@material-ui/core/Button';
 
 interface INewGameOptionProps {
   defaultPlayers: number;
@@ -35,16 +34,16 @@ export default class NewGameOptions extends React.Component<INewGameOptionProps,
   public render() {
     return (
       <div>
-        <Button size="large" variant="raised" color="primary" style={style}>
+        <Button size="large"  color="primary" style={style}>
             3
         </Button>
-        <Button size="large" variant="raised" color="primary" style={style}>
+        <Button size="large"  color="primary" style={style}>
             4
         </Button>
-        <Button size="large" variant="raised" color="primary" style={style}>
+        <Button size="large"  color="primary" style={style}>
             5
         </Button>
-          <Button size="large" variant="raised" color="primary" style={style}>
+          <Button size="large"  color="primary" style={style}>
             6
         </Button>
 

@@ -7,12 +7,9 @@ const app = express()
 
 //views.configure(app);
 api.configure(app);
+
 app.use(express.static('dist/client'))
 
-app.listen(port, (err) => {
-  if (err) {
-    return console.log(err)
-  }
-
+app.listen(port, () => {
   return console.log(`Game server is listening on ${port}`)
-})
+});

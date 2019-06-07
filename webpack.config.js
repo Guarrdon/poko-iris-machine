@@ -3,8 +3,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
     entry: "./src/client/index.tsx",
     output: {
-        filename: "clientBundle.js",
-        path: __dirname + "/dist/client"
+        filename: "bundle.js",
+        path: __dirname + "/dist/client/"
     },
 
     // Enable sourcemaps for debugging webpack's output.
@@ -27,7 +27,7 @@ module.exports = {
     plugins: [
         new CopyWebpackPlugin(
             [
-                { from: 'src/client/index.html', to: '', toType: 'file' },
+                { from: 'src/client/index.html', to: 'index.html', toType: 'file' },
                 { from: 'src/client/css/', to: 'css' }
             ],
             { ignore: ['*.*ignore'] }
